@@ -463,14 +463,14 @@ func marshal(c Config) *bytes.Buffer {
 // Pattern is a pattern in a Host declaration. Patterns are read-only values;
 // create a new one with NewPattern().
 type Pattern struct {
-	str   string // Its appearance in the file, not the value that gets compiled.
+	Str   string // Its appearance in the file, not the value that gets compiled.
 	regex *regexp.Regexp
 	not   bool // True if this is a negated match
 }
 
 // String prints the string representation of the pattern.
 func (p Pattern) String() string {
-	return p.str
+	return p.Str
 }
 
 // Copied from regexp.go with * and ? removed.
@@ -525,7 +525,7 @@ func NewPattern(s string) (*Pattern, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Pattern{str: s, regex: r, not: negated}, nil
+	return &Pattern{Str: s, regex: r, not: negated}, nil
 }
 
 // Host describes a Host directive and the keywords that follow it.
@@ -537,12 +537,12 @@ type Host struct {
 	// EOLComment is the comment (if any) terminating the Host line.
 	EOLComment string
 	// Whitespace if any between the Host declaration and a trailing comment.
-	spaceBeforeComment string
+	SpaceBeforeComment string
 
-	hasEquals    bool
-	leadingSpace int // TODO: handle spaces vs tabs here.
+	HasEquals    bool
+	LeadingSpace int // TODO: handle spaces vs tabs here.
 	// The file starts with an implicit "Host *" declaration.
-	implicit bool
+	Implicit bool
 }
 
 // Matches returns true if the Host matches for the given alias. For
@@ -572,10 +572,10 @@ func (h *Host) Matches(alias string) bool {
 func (h *Host) String() string {
 	var buf strings.Builder
 	//lint:ignore S1002 I prefer to write it this way
-	if h.implicit == false {
-		buf.WriteString(strings.Repeat(" ", int(h.leadingSpace)))
+	if h.Implicit == false {
+		buf.WriteString(strings.Repeat(" ", h.LeadingSpace))
 		buf.WriteString("Host")
-		if h.hasEquals {
+		if h.HasEquals {
 			buf.WriteString(" = ")
 		} else {
 			buf.WriteString(" ")
@@ -586,7 +586,7 @@ func (h *Host) String() string {
 				buf.WriteString(" ")
 			}
 		}
-		buf.WriteString(h.spaceBeforeComment)
+		buf.WriteString(h.SpaceBeforeComment)
 		if h.EOLComment != "" {
 			buf.WriteByte('#')
 			buf.WriteString(h.EOLComment)
@@ -612,16 +612,16 @@ type KV struct {
 	Key   string
 	Value string
 	// Whitespace after the value but before any comment
-	spaceAfterValue string
+	SpaceAfterValue string
 	Comment         string
-	hasEquals       bool
-	leadingSpace    int // Space before the key. TODO handle spaces vs tabs.
-	position        Position
+	HasEquals       bool
+	LeadingSpace    int // Space before the key. TODO handle spaces vs tabs.
+	Position        Position
 }
 
 // Pos returns k's Position.
 func (k *KV) Pos() Position {
-	return k.position
+	return k.Position
 }
 
 // String prints k as it was parsed in the config file.
@@ -630,10 +630,10 @@ func (k *KV) String() string {
 		return ""
 	}
 	equals := " "
-	if k.hasEquals {
+	if k.HasEquals {
 		equals = " = "
 	}
-	line := strings.Repeat(" ", int(k.leadingSpace)) + k.Key + equals + k.Value + k.spaceAfterValue
+	line := strings.Repeat(" ", k.LeadingSpace) + k.Key + equals + k.Value + k.SpaceAfterValue
 	if k.Comment != "" {
 		line += "#" + k.Comment
 	}
@@ -830,7 +830,7 @@ func newConfig() *Config {
 	return &Config{
 		Hosts: []*Host{
 			&Host{
-				implicit: true,
+				Implicit: true,
 				Patterns: []*Pattern{matchAll},
 				Nodes:    make([]Node, 0),
 			},

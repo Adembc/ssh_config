@@ -131,8 +131,8 @@ func (p *sshParser) parseKV() sshParserStateFn {
 			Patterns:           patterns,
 			Nodes:              make([]Node, 0),
 			EOLComment:         comment,
-			spaceBeforeComment: spaceBeforeComment,
-			hasEquals:          hasEquals,
+			SpaceBeforeComment: spaceBeforeComment,
+			HasEquals:          hasEquals,
 		})
 		return p.parseStart
 	}
@@ -155,11 +155,11 @@ func (p *sshParser) parseKV() sshParserStateFn {
 	kv := &KV{
 		Key:             key.val,
 		Value:           shortval,
-		spaceAfterValue: spaceAfterValue,
+		SpaceAfterValue: spaceAfterValue,
 		Comment:         comment,
-		hasEquals:       hasEquals,
-		leadingSpace:    key.Position.Col - 1,
-		position:        key.Position,
+		HasEquals:       hasEquals,
+		LeadingSpace:    key.Position.Col - 1,
+		Position:        key.Position,
 	}
 	lastHost.Nodes = append(lastHost.Nodes, kv)
 	return p.parseStart
